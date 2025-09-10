@@ -34,8 +34,8 @@ func (repository *DataKinerjaPemdaRepositoryImpl) Create(ctx context.Context, tx
 
 	// Insert target data
 	for _, target := range dataKinerjaPemda.Target {
-		queryTarget := "INSERT INTO tb_target (data_kinerja_id, target, satuan) VALUES (?, ?, ?)"
-		_, err := tx.ExecContext(ctx, queryTarget, id, target.Target, target.Satuan)
+		queryTarget := "INSERT INTO tb_target (data_kinerja_id, target, satuan, tahun) VALUES (?, ?, ?, ?)"
+		_, err := tx.ExecContext(ctx, queryTarget, id, target.Target, target.Satuan, target.Tahun)
 		if err != nil {
 			return domain.DataKinerjaPemda{}, err
 		}
