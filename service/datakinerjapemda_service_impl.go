@@ -32,12 +32,19 @@ func (service *DataKinerjaPemdaServiceImpl) Create(ctx context.Context, request 
 	err := service.Validate.Struct(request)
 	helper.PanicIfError(err)
 
+	// Log request data untuk debugging
+	log.Printf("Creating Data Kinerja with JenisDataId: %d", request.JenisDataId)
+
 	tx, err := service.DB.Begin()
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
 
+	// Validasi jenis_data_id
 	jenisData, err := service.JenisDataRepository.FindById(ctx, tx, request.JenisDataId)
-	helper.PanicIfError(err)
+	if err != nil {
+		log.Printf("Error finding JenisData with ID %d: %v", request.JenisDataId, err)
+		return web.DataKinerjaPemdaResponse{} // Return empty response jika data tidak ditemukan
+	}
 
 	dataKinerjaPemda := domain.DataKinerjaPemda{
 		JenisDataId:          request.JenisDataId,

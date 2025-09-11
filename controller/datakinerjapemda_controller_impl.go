@@ -35,6 +35,7 @@ func (controller *DataKinerjaPemdaControllerImpl) Create(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, web.WebResponse{
 			Code:   http.StatusBadRequest,
 			Status: "BAD_REQUEST",
+			Data:   err.Error(),
 		})
 	}
 

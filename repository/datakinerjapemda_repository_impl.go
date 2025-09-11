@@ -37,6 +37,7 @@ func (repository *DataKinerjaPemdaRepositoryImpl) Create(ctx context.Context, tx
 		queryTarget := "INSERT INTO tb_target (data_kinerja_id, target, satuan, tahun) VALUES (?, ?, ?, ?)"
 		_, err := tx.ExecContext(ctx, queryTarget, id, target.Target, target.Satuan, target.Tahun)
 		if err != nil {
+			log.Printf("Error inserting target: %v", err)
 			return domain.DataKinerjaPemda{}, err
 		}
 	}
@@ -267,7 +268,7 @@ func (repository *DataKinerjaPemdaRepositoryImpl) FindAll(ctx context.Context, t
             dk.rumus_perhitungan,
             dk.sumber_data,
             dk.instansi_produsen_data,
-            dk.keterangan
+            dk.keterangan,
             t.id as target_id,
             t.target,
             t.satuan,
