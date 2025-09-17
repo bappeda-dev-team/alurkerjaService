@@ -367,7 +367,7 @@ func (repository *DataKinerjaPemdaRepositoryImpl) FindAll(ctx context.Context, t
 
 func (repository *DataKinerjaPemdaRepositoryImpl) Delete(ctx context.Context, tx *sql.Tx, id int) error {
 	// Delete targets first due to foreign key constraint
-	_, err := tx.ExecContext(ctx, "DELETE FROM tb_target WHERE data_kinerja_id = ?", id)
+	_, err := tx.ExecContext(ctx, "DELETE FROM tb_data_kinerja WHERE id = ?", id)
 	helper.PanicIfError(err)
 
 	return nil
