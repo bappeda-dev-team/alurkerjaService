@@ -28,6 +28,7 @@ func NewServer(e *echo.Echo) *echo.Echo {
 
 // @host ${HOST}:${PORT}
 // @BasePath /
+// @schemes http https
 
 func main() {
 
