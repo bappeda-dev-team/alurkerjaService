@@ -261,21 +261,23 @@ func (repository *DataKinerjaPemdaRepositoryImpl) FindAll(ctx context.Context, t
 
 	// Base query dengan LEFT JOIN untuk mendapatkan target
 	query = `
-        SELECT 
-            dk.id,
-            dk.jenis_data_id,
-            dk.nama_data,
-            dk.rumus_perhitungan,
-            dk.sumber_data,
-            dk.instansi_produsen_data,
-            dk.keterangan,
-            t.id as target_id,
-            t.target,
-            t.satuan,
-            t.tahun as target_tahun
-        FROM tb_data_kinerja dk
-        LEFT JOIN tb_target t ON dk.id = t.data_kinerja_id
-        WHERE 1=1`
+	SELECT 
+		dk.id,
+		dk.jenis_data_id,
+		jd.jenis_data as nama_jenis_data,
+		dk.nama_data,
+		dk.rumus_perhitungan,
+		dk.sumber_data,
+		dk.instansi_produsen_data,
+		dk.keterangan,
+		t.id as target_id,
+		t.target,
+		t.satuan,
+		t.tahun as target_tahun
+	FROM tb_data_kinerja dk
+	LEFT JOIN tb_target t ON dk.id = t.data_kinerja_id
+	JOIN tb_jenis_data jd ON dk.jenis_data_id = jd.id
+	WHERE 1=1`
 
 	// Add filters
 	if jenisDataId > 0 {
@@ -309,6 +311,7 @@ func (repository *DataKinerjaPemdaRepositoryImpl) FindAll(ctx context.Context, t
 		err := rows.Scan(
 			&dataKinerja.Id,
 			&dataKinerja.JenisDataId,
+			&dataKinerja.JenisData, // Field baru untuk menyimpan nama jenis data
 			&dataKinerja.NamaData,
 			&dataKinerja.RumusPerhitungan,
 			&dataKinerja.SumberData,
@@ -352,7 +355,7 @@ func (repository *DataKinerjaPemdaRepositoryImpl) FindAll(ctx context.Context, t
 		if data, ok := dataKinerjaMap[id]; ok {
 			// Sort target berdasarkan tahun
 			sort.Slice(data.Target, func(i, j int) bool {
-				return data.Target[i].Tahun < data.Target[j].Tahun
+				return data.Target[i].Tahun > data.Target[j].Tahun
 			})
 			result = append(result, *data)
 		}
