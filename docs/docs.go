@@ -742,7 +742,7 @@ var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "${HOST}:${PORT}",
 	BasePath:         "/",
-	Schemes:          []string{},
+	Schemes:          []string{"http", "https"},
 	Title:            "Alur Kerja Service API",
 	Description:      "API For Alur Kerja Services",
 	InfoInstanceName: "swagger",
