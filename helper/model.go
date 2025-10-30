@@ -58,3 +58,44 @@ func ToTargetResponses(targets []domain.Target) []web.TargetResponse {
 	}
 	return responses
 }
+
+func ToDataKinerjaOpdResponse(data domain.DataKinerjaOpd) web.DataKinerjaOpdResponse {
+	return web.DataKinerjaOpdResponse{
+		Id:                   data.Id,
+		JenisDataId:          data.JenisDataId,
+		JenisData:            data.JenisData,
+		KodeOpd:              data.KodeOpd,
+		NamaOpd:              data.NamaOpd,
+		NamaData:             data.NamaData,
+		RumusPerhitungan:     data.RumusPerhitungan,
+		SumberData:           data.SumberData,
+		InstansiProdusenData: data.InstansiProdusenData,
+		Target:               ToTargetOpdResponses(data.Target),
+		Keterangan:           data.Keterangan,
+	}
+}
+
+func ToDataKinerjaOpdResponses(items []domain.DataKinerjaOpd) []web.DataKinerjaOpdResponse {
+	var responses []web.DataKinerjaOpdResponse
+	for _, it := range items {
+		responses = append(responses, ToDataKinerjaOpdResponse(it))
+	}
+	return responses
+}
+
+func ToTargetOpdResponse(t domain.TargetOpd) web.TargetResponse {
+	return web.TargetResponse{
+		Id:     t.Id,
+		Target: t.Target,
+		Satuan: t.Satuan,
+		Tahun:  t.Tahun,
+	}
+}
+
+func ToTargetOpdResponses(ts []domain.TargetOpd) []web.TargetResponse {
+	var responses []web.TargetResponse
+	for _, t := range ts {
+		responses = append(responses, ToTargetOpdResponse(t))
+	}
+	return responses
+}

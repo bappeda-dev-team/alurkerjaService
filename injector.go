@@ -33,6 +33,15 @@ var dataKinerjaPemdaSet = wire.NewSet(
 	wire.Bind(new(controller.DataKinerjaPemdaController), new(*controller.DataKinerjaPemdaControllerImpl)),
 )
 
+var dataKinerjaOpdSet = wire.NewSet(
+	repository.NewDataKinerjaOpdRepositoryImpl,
+	wire.Bind(new(repository.DataKinerjaOpdRepository), new(*repository.DataKinerjaOpdRepositoryImpl)),
+	service.NewDataKinerjaOpdServiceImpl,
+	wire.Bind(new(service.DataKinerjaOpdService), new(*service.DataKinerjaOpdServiceImpl)),
+	controller.NewDataKinerjaOpdControllerImpl,
+	wire.Bind(new(controller.DataKinerjaOpdController), new(*controller.DataKinerjaOpdControllerImpl)),
+)
+
 func InitializedServer() *echo.Echo {
 	wire.Build(
 		app.GetConnection,
@@ -40,6 +49,7 @@ func InitializedServer() *echo.Echo {
 		validator.New,
 		jenisDataSet,
 		dataKinerjaPemdaSet,
+		dataKinerjaOpdSet,
 		app.NewRouter,
 	)
 	return nil

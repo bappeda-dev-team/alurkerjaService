@@ -24,6 +24,275 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/datakinerjaopd": {
+            "post": {
+                "description": "Create new Data Kinerja OPD with targets",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Data Kinerja OPD"
+                ],
+                "summary": "Create Data Kinerja OPD",
+                "parameters": [
+                    {
+                        "description": "Data Kinerja OPD Create Request",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web.DataKinerjaOpdCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/web.WebResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/web.DataKinerjaOpdResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.WebResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/datakinerjaopd/detail/{id}": {
+            "get": {
+                "description": "Get Data Kinerja OPD detail by ID including targets",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Data Kinerja OPD"
+                ],
+                "summary": "Get Data Kinerja OPD by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Data Kinerja OPD ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/web.WebResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/web.DataKinerjaOpdResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.WebResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/web.WebResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/datakinerjaopd/list/{kode_opd}/{jenis_data_id}": {
+            "get": {
+                "description": "Get list of Data Kinerja OPD filtered by jenis data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Data Kinerja OPD"
+                ],
+                "summary": "List Data Kinerja OPD",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Kode OPD",
+                        "name": "kode_opd",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Jenis Data ID",
+                        "name": "jenis_data_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/web.WebResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/web.DataKinerjaOpdResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.WebResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/datakinerjaopd/{id}": {
+            "put": {
+                "description": "Update existing Data Kinerja OPD by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Data Kinerja OPD"
+                ],
+                "summary": "Update Data Kinerja OPD",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Data Kinerja OPD ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Data Kinerja OPD Update Request",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web.DataKinerjaOpdUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/web.WebResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/web.DataKinerjaOpdResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.WebResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete Data Kinerja OPD by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Data Kinerja OPD"
+                ],
+                "summary": "Delete Data Kinerja OPD",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Data Kinerja OPD ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.WebResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.WebResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/web.WebResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/datakinerjapemda": {
             "post": {
                 "description": "Create new Data Kinerja Pemda with targets",
@@ -513,6 +782,141 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "web.DataKinerjaOpdCreateRequest": {
+            "type": "object",
+            "required": [
+                "instansi_produsen_data",
+                "jenis_data_id",
+                "kode_opd",
+                "nama_data",
+                "nama_opd",
+                "rumus_perhitungan",
+                "sumber_data",
+                "target"
+            ],
+            "properties": {
+                "instansi_produsen_data": {
+                    "type": "string"
+                },
+                "jenis_data_id": {
+                    "type": "integer"
+                },
+                "keterangan": {
+                    "type": "string"
+                },
+                "kode_opd": {
+                    "type": "string"
+                },
+                "nama_data": {
+                    "type": "string"
+                },
+                "nama_opd": {
+                    "type": "string"
+                },
+                "rumus_perhitungan": {
+                    "type": "string"
+                },
+                "sumber_data": {
+                    "type": "string"
+                },
+                "target": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web.TargetCreateRequest"
+                    }
+                }
+            }
+        },
+        "web.DataKinerjaOpdResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "instansi_produsen_data": {
+                    "type": "string"
+                },
+                "jenis_data": {
+                    "type": "string"
+                },
+                "jenis_data_id": {
+                    "type": "integer"
+                },
+                "keterangan": {
+                    "type": "string"
+                },
+                "kode_opd": {
+                    "type": "string"
+                },
+                "nama_data": {
+                    "type": "string"
+                },
+                "nama_opd": {
+                    "type": "string"
+                },
+                "rumus_perhitungan": {
+                    "type": "string"
+                },
+                "sumber_data": {
+                    "type": "string"
+                },
+                "target": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web.TargetResponse"
+                    }
+                }
+            }
+        },
+        "web.DataKinerjaOpdUpdateRequest": {
+            "type": "object",
+            "required": [
+                "id",
+                "instansi_produsen_data",
+                "jenis_data_id",
+                "kode_opd",
+                "nama_data",
+                "nama_opd",
+                "rumus_perhitungan",
+                "sumber_data",
+                "target"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "instansi_produsen_data": {
+                    "type": "string"
+                },
+                "jenis_data_id": {
+                    "type": "integer"
+                },
+                "keterangan": {
+                    "type": "string"
+                },
+                "kode_opd": {
+                    "type": "string"
+                },
+                "nama_data": {
+                    "type": "string"
+                },
+                "nama_opd": {
+                    "type": "string"
+                },
+                "rumus_perhitungan": {
+                    "type": "string"
+                },
+                "sumber_data": {
+                    "type": "string"
+                },
+                "target": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web.TargetUpdateRequest"
+                    }
+                }
+            }
+        },
         "web.DataKinerjaPemdaCreateRequest": {
             "type": "object",
             "required": [

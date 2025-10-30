@@ -28,7 +28,10 @@ func InitializedServer() *echo.Echo {
 	dataKinerjaPemdaRepositoryImpl := repository.NewDataKinerjaPemdaRepositoryImpl()
 	dataKinerjaPemdaServiceImpl := service.NewDataKinerjaPemdaServiceImpl(dataKinerjaPemdaRepositoryImpl, db, validate, jenisDataRepositoryImpl)
 	dataKinerjaPemdaControllerImpl := controller.NewDataKinerjaPemdaControllerImpl(dataKinerjaPemdaServiceImpl)
-	echoEcho := app.NewRouter(jenisDataControllerImpl, dataKinerjaPemdaControllerImpl)
+	dataKinerjaOpdRepositoryImpl := repository.NewDataKinerjaOpdRepositoryImpl()
+	dataKinerjaOpdServiceImpl := service.NewDataKinerjaOpdServiceImpl(dataKinerjaOpdRepositoryImpl, db, validate, jenisDataRepositoryImpl)
+	dataKinerjaOpdControllerImpl := controller.NewDataKinerjaOpdControllerImpl(dataKinerjaOpdServiceImpl)
+	echoEcho := app.NewRouter(jenisDataControllerImpl, dataKinerjaPemdaControllerImpl, dataKinerjaOpdControllerImpl)
 	return echoEcho
 }
 
@@ -41,3 +44,5 @@ var (
 var jenisDataSet = wire.NewSet(repository.NewJenisDataRepositoryImpl, wire.Bind(new(repository.JenisDataRepository), new(*repository.JenisDataRepositoryImpl)), service.NewJenisDataServiceImpl, wire.Bind(new(service.JenisDataService), new(*service.JenisDataServiceImpl)), controller.NewJenisDataControllerImpl, wire.Bind(new(controller.JenisDataController), new(*controller.JenisDataControllerImpl)))
 
 var dataKinerjaPemdaSet = wire.NewSet(repository.NewDataKinerjaPemdaRepositoryImpl, wire.Bind(new(repository.DataKinerjaPemdaRepository), new(*repository.DataKinerjaPemdaRepositoryImpl)), service.NewDataKinerjaPemdaServiceImpl, wire.Bind(new(service.DataKinerjaPemdaService), new(*service.DataKinerjaPemdaServiceImpl)), controller.NewDataKinerjaPemdaControllerImpl, wire.Bind(new(controller.DataKinerjaPemdaController), new(*controller.DataKinerjaPemdaControllerImpl)))
+
+var dataKinerjaOpdSet = wire.NewSet(repository.NewDataKinerjaOpdRepositoryImpl, wire.Bind(new(repository.DataKinerjaOpdRepository), new(*repository.DataKinerjaOpdRepositoryImpl)), service.NewDataKinerjaOpdServiceImpl, wire.Bind(new(service.DataKinerjaOpdService), new(*service.DataKinerjaOpdServiceImpl)), controller.NewDataKinerjaOpdControllerImpl, wire.Bind(new(controller.DataKinerjaOpdController), new(*controller.DataKinerjaOpdControllerImpl)))

@@ -1,5 +1,99 @@
 basePath: /
 definitions:
+  web.DataKinerjaOpdCreateRequest:
+    properties:
+      instansi_produsen_data:
+        type: string
+      jenis_data_id:
+        type: integer
+      keterangan:
+        type: string
+      kode_opd:
+        type: string
+      nama_data:
+        type: string
+      nama_opd:
+        type: string
+      rumus_perhitungan:
+        type: string
+      sumber_data:
+        type: string
+      target:
+        items:
+          $ref: '#/definitions/web.TargetCreateRequest'
+        type: array
+    required:
+    - instansi_produsen_data
+    - jenis_data_id
+    - kode_opd
+    - nama_data
+    - nama_opd
+    - rumus_perhitungan
+    - sumber_data
+    - target
+    type: object
+  web.DataKinerjaOpdResponse:
+    properties:
+      id:
+        type: integer
+      instansi_produsen_data:
+        type: string
+      jenis_data:
+        type: string
+      jenis_data_id:
+        type: integer
+      keterangan:
+        type: string
+      kode_opd:
+        type: string
+      nama_data:
+        type: string
+      nama_opd:
+        type: string
+      rumus_perhitungan:
+        type: string
+      sumber_data:
+        type: string
+      target:
+        items:
+          $ref: '#/definitions/web.TargetResponse'
+        type: array
+    type: object
+  web.DataKinerjaOpdUpdateRequest:
+    properties:
+      id:
+        type: integer
+      instansi_produsen_data:
+        type: string
+      jenis_data_id:
+        type: integer
+      keterangan:
+        type: string
+      kode_opd:
+        type: string
+      nama_data:
+        type: string
+      nama_opd:
+        type: string
+      rumus_perhitungan:
+        type: string
+      sumber_data:
+        type: string
+      target:
+        items:
+          $ref: '#/definitions/web.TargetUpdateRequest'
+        type: array
+    required:
+    - id
+    - instansi_produsen_data
+    - jenis_data_id
+    - kode_opd
+    - nama_data
+    - nama_opd
+    - rumus_perhitungan
+    - sumber_data
+    - target
+    type: object
   web.DataKinerjaPemdaCreateRequest:
     properties:
       instansi_produsen_data:
@@ -164,6 +258,172 @@ info:
   title: Alur Kerja Service API
   version: "1.0"
 paths:
+  /datakinerjaopd:
+    post:
+      consumes:
+      - application/json
+      description: Create new Data Kinerja OPD with targets
+      parameters:
+      - description: Data Kinerja OPD Create Request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/web.DataKinerjaOpdCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/web.DataKinerjaOpdResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      summary: Create Data Kinerja OPD
+      tags:
+      - Data Kinerja OPD
+  /datakinerjaopd/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Data Kinerja OPD by ID
+      parameters:
+      - description: Data Kinerja OPD ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      summary: Delete Data Kinerja OPD
+      tags:
+      - Data Kinerja OPD
+    put:
+      consumes:
+      - application/json
+      description: Update existing Data Kinerja OPD by ID
+      parameters:
+      - description: Data Kinerja OPD ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Data Kinerja OPD Update Request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/web.DataKinerjaOpdUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/web.DataKinerjaOpdResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      summary: Update Data Kinerja OPD
+      tags:
+      - Data Kinerja OPD
+  /datakinerjaopd/detail/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get Data Kinerja OPD detail by ID including targets
+      parameters:
+      - description: Data Kinerja OPD ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/web.DataKinerjaOpdResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      summary: Get Data Kinerja OPD by ID
+      tags:
+      - Data Kinerja OPD
+  /datakinerjaopd/list/{kode_opd}/{jenis_data_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get list of Data Kinerja OPD filtered by jenis data
+      parameters:
+      - description: Kode OPD
+        in: path
+        name: kode_opd
+        required: true
+        type: string
+      - description: Jenis Data ID
+        in: path
+        name: jenis_data_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/web.DataKinerjaOpdResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      summary: List Data Kinerja OPD
+      tags:
+      - Data Kinerja OPD
   /datakinerjapemda:
     post:
       consumes:

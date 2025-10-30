@@ -8,7 +8,7 @@ import (
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
-func NewRouter(jenisDataController controller.JenisDataController, dataKinerjaPemdaController controller.DataKinerjaPemdaController) *echo.Echo {
+func NewRouter(jenisDataController controller.JenisDataController, dataKinerjaPemdaController controller.DataKinerjaPemdaController, dataKinerjaOpdController controller.DataKinerjaOpdController) *echo.Echo {
 	e := echo.New()
 
 	e.Use(middleware.Logger())
@@ -28,6 +28,12 @@ func NewRouter(jenisDataController controller.JenisDataController, dataKinerjaPe
 	e.DELETE("/datakinerjapemda/:id", dataKinerjaPemdaController.Delete)
 	e.GET("/datakinerjapemda/detail/:id", dataKinerjaPemdaController.FindById)
 	e.GET("/datakinerjapemda/list/:jenis_data_id", dataKinerjaPemdaController.FindAll)
+
+	e.POST("/datakinerjaopd", dataKinerjaOpdController.Create)
+	e.PUT("/datakinerjaopd/:id", dataKinerjaOpdController.Update)
+	e.DELETE("/datakinerjaopd/:id", dataKinerjaOpdController.Delete)
+	e.GET("/datakinerjaopd/detail/:id", dataKinerjaOpdController.FindById)
+	e.GET("/datakinerjaopd/list/:kode_opd/:jenis_data_id", dataKinerjaOpdController.FindAll)
 
 	return e
 }
