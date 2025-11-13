@@ -19,7 +19,7 @@
         },
         "version": "1.0"
     },
-    "host": "${HOST}:${PORT}",
+    "host": "${PROD_HOSTNAME}",
     "basePath": "/",
     "paths": {
         "/datakinerjaopd": {

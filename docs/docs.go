@@ -1144,7 +1144,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "${HOST}:${PORT}",
+	Host:             "${PROD_HOSTNAME}",
 	BasePath:         "/",
 	Schemes:          []string{"http", "https"},
 	Title:            "Alur Kerja Service API",

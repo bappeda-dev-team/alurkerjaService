@@ -244,7 +244,7 @@ definitions:
       status:
         type: string
     type: object
-host: ${HOST}:${PORT}
+host: ${PROD_HOSTNAME}
 info:
   contact:
     email: support@swagger.io

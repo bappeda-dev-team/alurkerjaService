@@ -26,7 +26,7 @@ func NewServer(e *echo.Echo) *echo.Echo {
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host ${HOST}:${PORT}
+// @host ${PROD_HOSTNAME}
 // @BasePath /
 // @schemes http https
 
@@ -39,7 +39,9 @@ func main() {
 	host := os.Getenv("host")
 	port := os.Getenv("port")
 
-	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", host, port)
+	prod := os.Getenv("PROD_HOSTNAME")
+
+	docs.SwaggerInfo.Host = fmt.Sprintf("%v", prod)
 
 	addr := fmt.Sprintf("%s:%s", host, port)
 
