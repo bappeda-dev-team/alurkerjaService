@@ -722,7 +722,4 @@ paths:
       summary: Update Jenis Data
       tags:
       - Jenis Data
-schemes:
-- http
-- https
 swagger: "2.0"

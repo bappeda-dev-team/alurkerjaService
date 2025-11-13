@@ -28,7 +28,7 @@ func NewServer(e *echo.Echo) *echo.Echo {
 
 // @host ${PROD_HOSTNAME}
 // @BasePath /
-// @schemes http https
+/////// @schemes http https
 
 func main() {
 
