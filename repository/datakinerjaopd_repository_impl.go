@@ -174,7 +174,7 @@ func (repository *DataKinerjaOpdRepositoryImpl) FindById(ctx context.Context, tx
 			t.tahun AS target_tahun
 		FROM tb_data_kinerja_opd dk
 		LEFT JOIN tb_target_opd t ON dk.id = t.data_kinerja_opd_id
-		JOIN tb_jenis_data jd ON dk.jenis_data_id = jd.id
+		JOIN tb_jenis_data_opd jd ON dk.jenis_data_id = jd.id AND dk.kode_opd = jd.kode_opd
 		WHERE dk.id = ?
 		ORDER BY t.tahun DESC`
 	rows, err := tx.QueryContext(ctx, query, id)
@@ -263,7 +263,7 @@ func (repository *DataKinerjaOpdRepositoryImpl) FindAll(ctx context.Context, tx 
 				t.tahun AS target_tahun
 			FROM tb_data_kinerja_opd dk
 			LEFT JOIN tb_target_opd t ON dk.id = t.data_kinerja_opd_id
-			JOIN tb_jenis_data jd ON dk.jenis_data_id = jd.id
+			JOIN tb_jenis_data_opd jd ON dk.jenis_data_id = jd.id AND dk.kode_opd = jd.kode_opd
 			WHERE 1=1`
 		args []interface{}
 	)

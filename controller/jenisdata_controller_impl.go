@@ -189,3 +189,185 @@ func (controller *JenisDataControllerImpl) FindAll(c echo.Context) error {
 		Data:   jenisDataResponses,
 	})
 }
+
+// jenis data opd
+
+// @Summary Create Jenis Data OPD
+// @Description Create new Jenis Data OPD
+// @Tags Jenis Data OPD
+// @Accept json
+// @Produce json
+// @Param data body web.JenisDataOpdCreateRequest true "Jenis Data OPD Create Request"
+// @Success 201 {object} web.WebResponse{data=web.JenisDataOpdResponse} "Created"
+// @Failure 400 {object} web.WebResponse "Bad Request"
+// @Failure 500 {object} web.WebResponse "Internal Server Error"
+// @Router /jenisdataopd [post]
+func (controller *JenisDataControllerImpl) CreateOpd(c echo.Context) error {
+	jenisDataOpdCreateRequest := web.JenisDataOpdCreateRequest{}
+	err := c.Bind(&jenisDataOpdCreateRequest)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, web.WebResponse{
+			Code:   http.StatusBadRequest,
+			Status: "BAD_REQUEST",
+		})
+	}
+
+	jenisDataOpdResponse, err := controller.JenisDataService.CreateOpd(c.Request().Context(), jenisDataOpdCreateRequest)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, web.WebResponse{
+			Code:   http.StatusInternalServerError,
+			Status: "INTERNAL_SERVER_ERROR",
+		})
+	}
+
+	return c.JSON(http.StatusCreated, web.WebResponse{
+		Code:   http.StatusCreated,
+		Status: "CREATED",
+		Data:   jenisDataOpdResponse,
+	})
+}
+
+// @Summary Update Jenis Data OPD
+// @Description Update existing Jenis Data OPD by ID
+// @Tags Jenis Data OPD
+// @Accept json
+// @Produce json
+// @Param id path int true "Jenis Data OPD ID"
+// @Param data body web.JenisDataOpdUpdateRequest true "Jenis Data OPD Update Request"
+// @Success 200 {object} web.WebResponse{data=web.JenisDataOpdResponse} "OK"
+// @Failure 400 {object} web.WebResponse "Bad Request"
+// @Failure 500 {object} web.WebResponse "Internal Server Error"
+// @Router /jenisdataopd/{id} [put]
+func (controller *JenisDataControllerImpl) UpdateOpd(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, web.WebResponse{
+			Code:   http.StatusBadRequest,
+			Status: "BAD_REQUEST",
+		})
+	}
+
+	jenisDataOpdUpdateRequest := web.JenisDataOpdUpdateRequest{}
+	err = c.Bind(&jenisDataOpdUpdateRequest)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, web.WebResponse{
+			Code:   http.StatusBadRequest,
+			Status: "BAD_REQUEST",
+		})
+	}
+
+	jenisDataOpdUpdateRequest.Id = id
+
+	jenisDataOpdResponse, err := controller.JenisDataService.UpdateOpd(c.Request().Context(), jenisDataOpdUpdateRequest)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, web.WebResponse{
+			Code:   http.StatusInternalServerError,
+			Status: "INTERNAL_SERVER_ERROR",
+		})
+	}
+
+	return c.JSON(http.StatusOK, web.WebResponse{
+		Code:   http.StatusOK,
+		Status: "OK",
+		Data:   jenisDataOpdResponse,
+	})
+}
+
+// @Summary Delete Jenis Data OPD
+// @Description Delete existing Jenis Data OPD by ID
+// @Tags Jenis Data OPD
+// @Accept json
+// @Produce json
+// @Param id path int true "Jenis Data OPD ID"
+// @Success 200 {object} web.WebResponse "OK"
+func (controller *JenisDataControllerImpl) DeleteOpd(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, web.WebResponse{
+			Code:   http.StatusBadRequest,
+			Status: "BAD_REQUEST",
+		})
+	}
+
+	err = controller.JenisDataService.DeleteOpd(c.Request().Context(), id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, web.WebResponse{
+			Code:   http.StatusInternalServerError,
+			Status: "INTERNAL_SERVER_ERROR",
+		})
+	}
+
+	return c.JSON(http.StatusOK, web.WebResponse{
+		Code:   http.StatusOK,
+		Status: "OK",
+	})
+}
+
+// @Summary Get Jenis Data OPD by ID
+// @Description Get Jenis Data OPD detail by ID
+// @Tags Jenis Data OPD
+// @Accept json
+// @Produce json
+// @Param id path int true "Jenis Data OPD ID"
+// @Success 200 {object} web.WebResponse{data=web.JenisDataOpdResponse} "OK"
+// @Failure 400 {object} web.WebResponse "Bad Request"
+// @Failure 500 {object} web.WebResponse "Internal Server Error"
+// @Router /jenisdataopd/detail/{id} [get]
+func (controller *JenisDataControllerImpl) FindByIdOpd(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, web.WebResponse{
+			Code:   http.StatusBadRequest,
+			Status: "BAD_REQUEST",
+		})
+	}
+
+	jenisDataOpdResponse, err := controller.JenisDataService.FindByIdOpd(c.Request().Context(), id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, web.WebResponse{
+			Code:   http.StatusInternalServerError,
+			Status: "INTERNAL_SERVER_ERROR",
+		})
+	}
+
+	return c.JSON(http.StatusOK, web.WebResponse{
+		Code:   http.StatusOK,
+		Status: "OK",
+		Data:   jenisDataOpdResponse,
+	})
+}
+
+// @Summary List All Jenis Data OPD
+// @Description Get list of all Jenis Data OPD
+// @Tags Jenis Data OPD
+// @Accept json
+// @Produce json
+// @Param kode_opd path string true "Kode OPD"
+// @Success 200 {object} web.WebResponse{data=[]web.JenisDataOpdResponse} "OK"
+// @Failure 400 {object} web.WebResponse "Bad Request"
+// @Failure 500 {object} web.WebResponse "Internal Server Error"
+// @Router /jenisdataopd/list/{kode_opd} [get]
+func (controller *JenisDataControllerImpl) FindAllOpd(c echo.Context) error {
+	kodeOpd := c.Param("kode_opd")
+	if kodeOpd == "" {
+		return c.JSON(http.StatusBadRequest, web.WebResponse{
+			Code:   http.StatusBadRequest,
+			Status: "BAD_REQUEST",
+			Data:   "Kode OPD tidak boleh kosong",
+		})
+	}
+
+	jenisDataOpdResponses, err := controller.JenisDataService.FindAllOpd(c.Request().Context(), kodeOpd)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, web.WebResponse{
+			Code:   http.StatusInternalServerError,
+			Status: "INTERNAL_SERVER_ERROR",
+		})
+	}
+
+	return c.JSON(http.StatusOK, web.WebResponse{
+		Code:   http.StatusOK,
+		Status: "OK",
+		Data:   jenisDataOpdResponses,
+	})
+}

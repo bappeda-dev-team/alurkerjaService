@@ -122,3 +122,120 @@ func (service *JenisDataServiceImpl) FindAll(ctx context.Context) ([]web.JenisDa
 
 	return helper.ToJenisDataResponses(jenisDataDomains), nil
 }
+
+// jenis data opd
+func (service *JenisDataServiceImpl) CreateOpd(ctx context.Context, jenisDataOpd web.JenisDataOpdCreateRequest) (web.JenisDataOpdResponse, error) {
+	err := service.Validator.Struct(jenisDataOpd)
+	if err != nil {
+		return web.JenisDataOpdResponse{}, err
+	}
+
+	tx, err := service.DB.BeginTx(ctx, nil)
+	if err != nil {
+		return web.JenisDataOpdResponse{}, err
+	}
+	defer helper.CommitOrRollback(tx)
+
+	jenisDataOpdDomain := domain.JenisDataOpd{
+		KodeOpd:   jenisDataOpd.KodeOpd,
+		NamaOpd:   jenisDataOpd.NamaOpd,
+		JenisData: jenisDataOpd.JenisData,
+	}
+
+	jenisDataOpdDomain, err = service.JenisDataRepository.CreateOpd(ctx, tx, jenisDataOpdDomain)
+	if err != nil {
+		return web.JenisDataOpdResponse{}, err
+	}
+
+	return web.JenisDataOpdResponse{
+		KodeOpd:   jenisDataOpdDomain.KodeOpd,
+		NamaOpd:   jenisDataOpdDomain.NamaOpd,
+		JenisData: jenisDataOpdDomain.JenisData,
+	}, nil
+}
+
+func (service *JenisDataServiceImpl) UpdateOpd(ctx context.Context, jenisDataOpd web.JenisDataOpdUpdateRequest) (web.JenisDataOpdResponse, error) {
+	tx, err := service.DB.BeginTx(ctx, nil)
+	if err != nil {
+		return web.JenisDataOpdResponse{}, err
+	}
+	defer helper.CommitOrRollback(tx)
+
+	jenisDataOpdDomain := domain.JenisDataOpd{
+		Id:        jenisDataOpd.Id,
+		KodeOpd:   jenisDataOpd.KodeOpd,
+		NamaOpd:   jenisDataOpd.NamaOpd,
+		JenisData: jenisDataOpd.JenisData,
+	}
+
+	jenisDataOpdDomain, err = service.JenisDataRepository.UpdateOpd(ctx, tx, jenisDataOpdDomain)
+	if err != nil {
+		return web.JenisDataOpdResponse{}, err
+	}
+
+	return web.JenisDataOpdResponse{
+		Id:        jenisDataOpdDomain.Id,
+		KodeOpd:   jenisDataOpdDomain.KodeOpd,
+		NamaOpd:   jenisDataOpdDomain.NamaOpd,
+		JenisData: jenisDataOpdDomain.JenisData,
+	}, nil
+}
+
+func (service *JenisDataServiceImpl) DeleteOpd(ctx context.Context, id int) error {
+	tx, err := service.DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer helper.CommitOrRollback(tx)
+
+	err = service.JenisDataRepository.DeleteOpd(ctx, tx, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (service *JenisDataServiceImpl) FindByIdOpd(ctx context.Context, id int) (web.JenisDataOpdResponse, error) {
+	tx, err := service.DB.BeginTx(ctx, nil)
+	if err != nil {
+		return web.JenisDataOpdResponse{}, err
+	}
+	defer helper.CommitOrRollback(tx)
+
+	jenisDataOpdDomain, err := service.JenisDataRepository.FindByIdOpd(ctx, tx, id)
+	if err != nil {
+		return web.JenisDataOpdResponse{}, errors.New("id tidak ditemukan")
+	}
+
+	return web.JenisDataOpdResponse{
+		Id:        jenisDataOpdDomain.Id,
+		KodeOpd:   jenisDataOpdDomain.KodeOpd,
+		NamaOpd:   jenisDataOpdDomain.NamaOpd,
+		JenisData: jenisDataOpdDomain.JenisData,
+	}, nil
+}
+
+func (service *JenisDataServiceImpl) FindAllOpd(ctx context.Context, kodeOpd string) ([]web.JenisDataOpdResponse, error) {
+	tx, err := service.DB.BeginTx(ctx, nil)
+	if err != nil {
+		return []web.JenisDataOpdResponse{}, err
+	}
+	defer helper.CommitOrRollback(tx)
+
+	jenisDataOpdDomains, err := service.JenisDataRepository.FindAllOpd(ctx, tx, kodeOpd)
+	if err != nil {
+		return []web.JenisDataOpdResponse{}, err
+	}
+
+	var responses []web.JenisDataOpdResponse
+	for _, jenisDataOpdDomain := range jenisDataOpdDomains {
+		responses = append(responses, web.JenisDataOpdResponse{
+			Id:        jenisDataOpdDomain.Id,
+			KodeOpd:   jenisDataOpdDomain.KodeOpd,
+			NamaOpd:   jenisDataOpdDomain.NamaOpd,
+			JenisData: jenisDataOpdDomain.JenisData,
+		})
+	}
+	return responses, nil
+}

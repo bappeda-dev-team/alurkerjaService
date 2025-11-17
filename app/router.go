@@ -35,5 +35,11 @@ func NewRouter(jenisDataController controller.JenisDataController, dataKinerjaPe
 	e.GET("/datakinerjaopd/detail/:id", dataKinerjaOpdController.FindById)
 	e.GET("/datakinerjaopd/list/:kode_opd/:jenis_data_id", dataKinerjaOpdController.FindAll)
 
+	e.POST("/jenisdataopd", jenisDataController.CreateOpd)
+	e.PUT("/jenisdataopd/:id", jenisDataController.UpdateOpd)
+	e.DELETE("/jenisdataopd/:id", jenisDataController.DeleteOpd)
+	e.GET("/jenisdataopd/detail/:id", jenisDataController.FindByIdOpd)
+	e.GET("/jenisdataopd/list/:kode_opd", jenisDataController.FindAllOpd)
+
 	return e
 }

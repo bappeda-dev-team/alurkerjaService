@@ -779,6 +779,244 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/jenisdataopd": {
+            "post": {
+                "description": "Create new Jenis Data OPD",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Jenis Data OPD"
+                ],
+                "summary": "Create Jenis Data OPD",
+                "parameters": [
+                    {
+                        "description": "Jenis Data OPD Create Request",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web.JenisDataOpdCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/web.WebResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/web.JenisDataOpdResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.WebResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.WebResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/jenisdataopd/detail/{id}": {
+            "get": {
+                "description": "Get Jenis Data OPD detail by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Jenis Data OPD"
+                ],
+                "summary": "Get Jenis Data OPD by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Jenis Data OPD ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/web.WebResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/web.JenisDataOpdResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.WebResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.WebResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/jenisdataopd/list/{kode_opd}": {
+            "get": {
+                "description": "Get list of all Jenis Data OPD",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Jenis Data OPD"
+                ],
+                "summary": "List All Jenis Data OPD",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Kode OPD",
+                        "name": "kode_opd",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/web.WebResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/web.JenisDataOpdResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.WebResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.WebResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/jenisdataopd/{id}": {
+            "put": {
+                "description": "Update existing Jenis Data OPD by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Jenis Data OPD"
+                ],
+                "summary": "Update Jenis Data OPD",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Jenis Data OPD ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Jenis Data OPD Update Request",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web.JenisDataOpdUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/web.WebResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/web.JenisDataOpdResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.WebResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.WebResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -789,7 +1027,6 @@ const docTemplate = `{
                 "jenis_data_id",
                 "kode_opd",
                 "nama_data",
-                "nama_opd",
                 "rumus_perhitungan",
                 "sumber_data",
                 "target"
@@ -808,9 +1045,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "nama_data": {
-                    "type": "string"
-                },
-                "nama_opd": {
                     "type": "string"
                 },
                 "rumus_perhitungan": {
@@ -876,7 +1110,6 @@ const docTemplate = `{
                 "jenis_data_id",
                 "kode_opd",
                 "nama_data",
-                "nama_opd",
                 "rumus_perhitungan",
                 "sumber_data",
                 "target"
@@ -898,9 +1131,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "nama_data": {
-                    "type": "string"
-                },
-                "nama_opd": {
                     "type": "string"
                 },
                 "rumus_perhitungan": {
@@ -1037,6 +1267,65 @@ const docTemplate = `{
             ],
             "properties": {
                 "jenis_data": {
+                    "type": "string"
+                }
+            }
+        },
+        "web.JenisDataOpdCreateRequest": {
+            "type": "object",
+            "required": [
+                "jenis_data",
+                "kode_opd",
+                "nama_opd"
+            ],
+            "properties": {
+                "jenis_data": {
+                    "type": "string"
+                },
+                "kode_opd": {
+                    "type": "string"
+                },
+                "nama_opd": {
+                    "type": "string"
+                }
+            }
+        },
+        "web.JenisDataOpdResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "jenis_data": {
+                    "type": "string"
+                },
+                "kode_opd": {
+                    "type": "string"
+                },
+                "nama_opd": {
+                    "type": "string"
+                }
+            }
+        },
+        "web.JenisDataOpdUpdateRequest": {
+            "type": "object",
+            "required": [
+                "id",
+                "jenis_data",
+                "kode_opd",
+                "nama_opd"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "jenis_data": {
+                    "type": "string"
+                },
+                "kode_opd": {
+                    "type": "string"
+                },
+                "nama_opd": {
                     "type": "string"
                 }
             }

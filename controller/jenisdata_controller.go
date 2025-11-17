@@ -8,4 +8,9 @@ type JenisDataController interface {
 	Delete(c echo.Context) error
 	FindById(c echo.Context) error
 	FindAll(c echo.Context) error
+	CreateOpd(c echo.Context) error
+	UpdateOpd(c echo.Context) error
+	DeleteOpd(c echo.Context) error
+	FindByIdOpd(c echo.Context) error
+	FindAllOpd(c echo.Context) error
 }

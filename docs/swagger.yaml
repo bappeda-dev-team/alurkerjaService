@@ -12,8 +12,6 @@ definitions:
         type: string
       nama_data:
         type: string
-      nama_opd:
-        type: string
       rumus_perhitungan:
         type: string
       sumber_data:
@@ -27,7 +25,6 @@ definitions:
     - jenis_data_id
     - kode_opd
     - nama_data
-    - nama_opd
     - rumus_perhitungan
     - sumber_data
     - target
@@ -73,8 +70,6 @@ definitions:
         type: string
       nama_data:
         type: string
-      nama_opd:
-        type: string
       rumus_perhitungan:
         type: string
       sumber_data:
@@ -89,7 +84,6 @@ definitions:
     - jenis_data_id
     - kode_opd
     - nama_data
-    - nama_opd
     - rumus_perhitungan
     - sumber_data
     - target
@@ -178,6 +172,46 @@ definitions:
         type: string
     required:
     - jenis_data
+    type: object
+  web.JenisDataOpdCreateRequest:
+    properties:
+      jenis_data:
+        type: string
+      kode_opd:
+        type: string
+      nama_opd:
+        type: string
+    required:
+    - jenis_data
+    - kode_opd
+    - nama_opd
+    type: object
+  web.JenisDataOpdResponse:
+    properties:
+      id:
+        type: integer
+      jenis_data:
+        type: string
+      kode_opd:
+        type: string
+      nama_opd:
+        type: string
+    type: object
+  web.JenisDataOpdUpdateRequest:
+    properties:
+      id:
+        type: integer
+      jenis_data:
+        type: string
+      kode_opd:
+        type: string
+      nama_opd:
+        type: string
+    required:
+    - id
+    - jenis_data
+    - kode_opd
+    - nama_opd
     type: object
   web.JenisDataResponse:
     properties:
@@ -722,6 +756,151 @@ paths:
       summary: Update Jenis Data
       tags:
       - Jenis Data
+  /jenisdataopd:
+    post:
+      consumes:
+      - application/json
+      description: Create new Jenis Data OPD
+      parameters:
+      - description: Jenis Data OPD Create Request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/web.JenisDataOpdCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/web.JenisDataOpdResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      summary: Create Jenis Data OPD
+      tags:
+      - Jenis Data OPD
+  /jenisdataopd/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update existing Jenis Data OPD by ID
+      parameters:
+      - description: Jenis Data OPD ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Jenis Data OPD Update Request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/web.JenisDataOpdUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/web.JenisDataOpdResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      summary: Update Jenis Data OPD
+      tags:
+      - Jenis Data OPD
+  /jenisdataopd/detail/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get Jenis Data OPD detail by ID
+      parameters:
+      - description: Jenis Data OPD ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/web.JenisDataOpdResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      summary: Get Jenis Data OPD by ID
+      tags:
+      - Jenis Data OPD
+  /jenisdataopd/list/{kode_opd}:
+    get:
+      consumes:
+      - application/json
+      description: Get list of all Jenis Data OPD
+      parameters:
+      - description: Kode OPD
+        in: path
+        name: kode_opd
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/web.JenisDataOpdResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      summary: List All Jenis Data OPD
+      tags:
+      - Jenis Data OPD
 schemes:
 - http
 - https

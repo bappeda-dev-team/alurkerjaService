@@ -39,7 +39,14 @@ func (controller *DataKinerjaOpdControllerImpl) Create(c echo.Context) error {
 		})
 	}
 
-	dataKinerjaOpdResponse := controller.DataKinerjaOpdService.Create(c.Request().Context(), dataKinerjaOpdCreateRequest)
+	dataKinerjaOpdResponse, err := controller.DataKinerjaOpdService.Create(c.Request().Context(), dataKinerjaOpdCreateRequest)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, web.WebResponse{
+			Code:   http.StatusInternalServerError,
+			Status: "INTERNAL_SERVER_ERROR",
+			Data:   err.Error(),
+		})
+	}
 
 	return c.JSON(http.StatusCreated, web.WebResponse{
 		Code:   http.StatusCreated,
@@ -78,7 +85,14 @@ func (controller *DataKinerjaOpdControllerImpl) Update(c echo.Context) error {
 		})
 	}
 
-	dataKinerjaOpdResponse := controller.DataKinerjaOpdService.Update(c.Request().Context(), dataKinerjaOpdUpdateRequest)
+	dataKinerjaOpdResponse, err := controller.DataKinerjaOpdService.Update(c.Request().Context(), dataKinerjaOpdUpdateRequest)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, web.WebResponse{
+			Code:   http.StatusInternalServerError,
+			Status: "INTERNAL_SERVER_ERROR",
+			Data:   err.Error(),
+		})
+	}
 
 	return c.JSON(http.StatusOK, web.WebResponse{
 		Code:   http.StatusOK,

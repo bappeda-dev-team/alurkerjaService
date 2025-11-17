@@ -34,27 +34,44 @@ func NewDataKinerjaOpdServiceImpl(
 	}
 }
 
-func (s *DataKinerjaOpdServiceImpl) Create(ctx context.Context, request web.DataKinerjaOpdCreateRequest) web.DataKinerjaOpdResponse {
+func (s *DataKinerjaOpdServiceImpl) Create(ctx context.Context, request web.DataKinerjaOpdCreateRequest) (web.DataKinerjaOpdResponse, error) {
 	err := s.Validate.Struct(request)
-	helper.PanicIfError(err)
+	if err != nil {
+		log.Printf("Validation error: %v", err)
+		return web.DataKinerjaOpdResponse{}, errors.New("validasi gagal: " + err.Error())
+	}
 
 	log.Printf("Creating Data Kinerja OPD with JenisDataId: %d, KodeOpd: %s", request.JenisDataId, request.KodeOpd)
 
 	tx, err := s.DB.Begin()
-	helper.PanicIfError(err)
+	if err != nil {
+		log.Printf("Error starting transaction: %v", err)
+		return web.DataKinerjaOpdResponse{}, errors.New("gagal memulai transaksi database")
+	}
 	defer helper.CommitOrRollback(tx)
 
-	jenisData, err := s.JenisDataRepository.FindById(ctx, tx, request.JenisDataId)
+	// Cari jenis data OPD berdasarkan ID
+	jenisDataOpd, err := s.JenisDataRepository.FindByIdOpd(ctx, tx, request.JenisDataId)
 	if err != nil {
-		log.Printf("Error finding JenisData with ID %d: %v", request.JenisDataId, err)
-		return web.DataKinerjaOpdResponse{}
+		log.Printf("Error finding JenisDataOpd with ID %d: %v", request.JenisDataId, err)
+		return web.DataKinerjaOpdResponse{}, errors.New("jenis data OPD tidak ditemukan")
 	}
+
+	// Validasi: Kode OPD harus sama dengan yang ada di jenis data OPD
+	if jenisDataOpd.KodeOpd != request.KodeOpd {
+		log.Printf("Validasi Gagal - KodeOpd tidak sesuai!")
+		log.Printf("- KodeOpd di Request: %s", request.KodeOpd)
+		log.Printf("- KodeOpd di JenisDataOpd (ID:%d): %s", jenisDataOpd.Id, jenisDataOpd.KodeOpd)
+		return web.DataKinerjaOpdResponse{}, errors.New("kode OPD tidak sesuai dengan jenis data OPD yang dipilih")
+	}
+
+	log.Printf("Validasi Berhasil - KodeOpd sesuai: %s", request.KodeOpd)
 
 	data := domain.DataKinerjaOpd{
 		JenisDataId:          request.JenisDataId,
-		JenisData:            jenisData.JenisData,
+		JenisData:            jenisDataOpd.JenisData,
 		KodeOpd:              request.KodeOpd,
-		NamaOpd:              request.NamaOpd,
+		NamaOpd:              jenisDataOpd.NamaOpd,
 		NamaData:             request.NamaData,
 		RumusPerhitungan:     helper.EmptyStringIfNull(request.RumusPerhitungan),
 		SumberData:           helper.EmptyStringIfNull(request.SumberData),
@@ -72,34 +89,62 @@ func (s *DataKinerjaOpdServiceImpl) Create(ctx context.Context, request web.Data
 	}
 
 	result, err := s.Repository.Create(ctx, tx, data)
-	helper.PanicIfError(err)
+	if err != nil {
+		log.Printf("Error creating data: %v", err)
+		return web.DataKinerjaOpdResponse{}, errors.New("gagal menyimpan data kinerja OPD")
+	}
 
-	return helper.ToDataKinerjaOpdResponse(result)
+	log.Printf("Data Kinerja OPD berhasil dibuat dengan ID: %d", result.Id)
+
+	return helper.ToDataKinerjaOpdResponse(result), nil
 }
 
-func (s *DataKinerjaOpdServiceImpl) Update(ctx context.Context, request web.DataKinerjaOpdUpdateRequest) web.DataKinerjaOpdResponse {
+func (s *DataKinerjaOpdServiceImpl) Update(ctx context.Context, request web.DataKinerjaOpdUpdateRequest) (web.DataKinerjaOpdResponse, error) {
 	err := s.Validate.Struct(request)
-	helper.PanicIfError(err)
+	if err != nil {
+		log.Printf("Validation error: %v", err)
+		return web.DataKinerjaOpdResponse{}, errors.New("validasi gagal: " + err.Error())
+	}
 
 	tx, err := s.DB.Begin()
-	helper.PanicIfError(err)
+	if err != nil {
+		log.Printf("Error starting transaction: %v", err)
+		return web.DataKinerjaOpdResponse{}, errors.New("gagal memulai transaksi database")
+	}
 	defer helper.CommitOrRollback(tx)
 
 	existing, err := s.Repository.FindById(ctx, tx, request.Id)
-	helper.PanicIfError(err)
-
-	jenisData, err := s.JenisDataRepository.FindById(ctx, tx, request.JenisDataId)
-	helper.PanicIfError(err)
+	if err != nil {
+		log.Printf("Error finding existing data with ID %d: %v", request.Id, err)
+		return web.DataKinerjaOpdResponse{}, errors.New("data kinerja OPD tidak ditemukan")
+	}
 
 	log.Printf("Updating Data Kinerja OPD - ID: %d", existing.Id)
+
+	// Cari jenis data OPD berdasarkan ID yang baru
+	jenisDataOpd, err := s.JenisDataRepository.FindByIdOpd(ctx, tx, request.JenisDataId)
+	if err != nil {
+		log.Printf("Error finding JenisDataOpd with ID %d: %v", request.JenisDataId, err)
+		return web.DataKinerjaOpdResponse{}, errors.New("jenis data OPD tidak ditemukan")
+	}
+
+	// Validasi: Kode OPD harus sama dengan yang ada di jenis data OPD
+	if jenisDataOpd.KodeOpd != request.KodeOpd {
+		log.Printf("Validasi Gagal - KodeOpd tidak sesuai!")
+		log.Printf("- KodeOpd di Request: %s", request.KodeOpd)
+		log.Printf("- KodeOpd di JenisDataOpd (ID:%d): %s", jenisDataOpd.Id, jenisDataOpd.KodeOpd)
+		return web.DataKinerjaOpdResponse{}, errors.New("kode OPD tidak sesuai dengan jenis data OPD yang dipilih")
+	}
+
+	log.Printf("Validasi Berhasil - KodeOpd sesuai: %s", request.KodeOpd)
 	log.Printf("Current Data: %+v", existing)
 
 	data := domain.DataKinerjaOpd{
 		Id:                   request.Id,
 		JenisDataId:          request.JenisDataId,
-		JenisData:            jenisData.JenisData,
+		JenisData:            jenisDataOpd.JenisData,
 		KodeOpd:              request.KodeOpd,
-		NamaOpd:              request.NamaOpd,
+		NamaOpd:              jenisDataOpd.NamaOpd,
 		NamaData:             request.NamaData,
 		RumusPerhitungan:     helper.EmptyStringIfNull(request.RumusPerhitungan),
 		SumberData:           helper.EmptyStringIfNull(request.SumberData),
@@ -121,9 +166,14 @@ func (s *DataKinerjaOpdServiceImpl) Update(ctx context.Context, request web.Data
 	log.Printf("New Data: %+v", data)
 
 	result, err := s.Repository.Update(ctx, tx, data)
-	helper.PanicIfError(err)
+	if err != nil {
+		log.Printf("Error updating data: %v", err)
+		return web.DataKinerjaOpdResponse{}, errors.New("gagal mengupdate data kinerja OPD")
+	}
 
-	return helper.ToDataKinerjaOpdResponse(result)
+	log.Printf("Data Kinerja OPD berhasil diupdate dengan ID: %d", result.Id)
+
+	return helper.ToDataKinerjaOpdResponse(result), nil
 }
 
 func (s *DataKinerjaOpdServiceImpl) Delete(ctx context.Context, id int) {
