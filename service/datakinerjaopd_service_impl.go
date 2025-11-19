@@ -202,7 +202,7 @@ func (s *DataKinerjaOpdServiceImpl) FindById(ctx context.Context, id int) (web.D
 	return helper.ToDataKinerjaOpdResponse(result), nil
 }
 
-func (s *DataKinerjaOpdServiceImpl) FindAll(ctx context.Context, kodeOpd string, jenisDataId int) []web.DataKinerjaOpdResponse {
+func (s *DataKinerjaOpdServiceImpl) FindAll(ctx context.Context, kodeOpd string, jenisDataId int) []web.JenisDataKinerjaOpdResponse {
 	tx, err := s.DB.Begin()
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
@@ -211,14 +211,51 @@ func (s *DataKinerjaOpdServiceImpl) FindAll(ctx context.Context, kodeOpd string,
 	helper.PanicIfError(err)
 
 	if len(results) == 0 {
-		return []web.DataKinerjaOpdResponse{}
+		return []web.JenisDataKinerjaOpdResponse{}
 	}
 
-	responses := helper.ToDataKinerjaOpdResponses(results)
+	// Grouping berdasarkan jenis_data_id
+	jenisDataOpdMap := make(map[int]*web.JenisDataKinerjaOpdResponse)
 
+	for _, result := range results {
+		// Jika jenis data OPD belum ada di map, buat yang baru
+		if _, exists := jenisDataOpdMap[result.JenisDataId]; !exists {
+			jenisDataOpdMap[result.JenisDataId] = &web.JenisDataKinerjaOpdResponse{
+				Id:             result.JenisDataId,
+				KodeOpd:        result.KodeOpd,
+				NamaOpd:        result.NamaOpd,
+				JenisData:      result.JenisData,
+				DataKinerjaOpd: []web.DataKinerjaOpdResponse{},
+			}
+		}
+
+		// Tambahkan data kinerja HANYA jika Id > 0 (ada data kinerja)
+		if result.Id > 0 {
+			jenisDataOpdMap[result.JenisDataId].DataKinerjaOpd = append(
+				jenisDataOpdMap[result.JenisDataId].DataKinerjaOpd,
+				helper.ToDataKinerjaOpdResponse(result),
+			)
+		}
+	}
+
+	// Convert map ke slice
+	var responses []web.JenisDataKinerjaOpdResponse
+	for _, jenisDataOpdResp := range jenisDataOpdMap {
+		responses = append(responses, *jenisDataOpdResp)
+	}
+
+	// Log untuk debugging
 	for _, resp := range responses {
-		log.Printf("Data Kinerja OPD ID: %d, OPD: %s - %s, Nama: %s", resp.Id, resp.KodeOpd, resp.NamaOpd, resp.NamaData)
-		log.Printf("Jumlah Target: %d", len(resp.Target))
+		log.Printf("Jenis Data OPD ID: %d, OPD: %s - %s, Jenis Data: %s",
+			resp.Id, resp.KodeOpd, resp.NamaOpd, resp.JenisData)
+		log.Printf("Jumlah Data Kinerja OPD: %d", len(resp.DataKinerjaOpd))
+		if len(resp.DataKinerjaOpd) == 0 {
+			log.Printf("  (Tidak ada data kinerja untuk jenis data OPD ini)")
+		}
+		for _, dk := range resp.DataKinerjaOpd {
+			log.Printf("  - Data Kinerja OPD ID: %d, Nama: %s", dk.Id, dk.NamaData)
+			log.Printf("    Jumlah Target: %d", len(dk.Target))
+		}
 	}
 
 	return responses

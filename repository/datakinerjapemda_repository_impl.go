@@ -259,12 +259,13 @@ func (repository *DataKinerjaPemdaRepositoryImpl) FindAll(ctx context.Context, t
 	var query string
 	var args []interface{}
 
-	// Base query dengan LEFT JOIN untuk mendapatkan target
+	// UBAH: Mulai dari tb_jenis_data, bukan dari tb_data_kinerja
+	// Jadi jenis data tetap muncul meskipun tidak ada data kinerja
 	query = `
 	SELECT 
-		dk.id,
-		dk.jenis_data_id,
+		jd.id as jenis_data_id,
 		jd.jenis_data as nama_jenis_data,
+		dk.id,
 		dk.nama_data,
 		dk.rumus_perhitungan,
 		dk.sumber_data,
@@ -274,19 +275,19 @@ func (repository *DataKinerjaPemdaRepositoryImpl) FindAll(ctx context.Context, t
 		t.target,
 		t.satuan,
 		t.tahun as target_tahun
-	FROM tb_data_kinerja dk
+	FROM tb_jenis_data jd
+	LEFT JOIN tb_data_kinerja dk ON jd.id = dk.jenis_data_id
 	LEFT JOIN tb_target t ON dk.id = t.data_kinerja_id
-	JOIN tb_jenis_data jd ON dk.jenis_data_id = jd.id
 	WHERE 1=1`
 
 	// Add filters
 	if jenisDataId > 0 {
-		query += " AND dk.jenis_data_id = ?"
+		query += " AND jd.id = ?"
 		args = append(args, jenisDataId)
 	}
 
-	// Add ordering untuk data kinerja dan target
-	query += " ORDER BY dk.id ASC, t.tahun ASC"
+	// Add ordering
+	query += " ORDER BY jd.id ASC, dk.id ASC, t.tahun DESC"
 
 	// Execute query with filters
 	rows, err := tx.QueryContext(ctx, query, args...)
@@ -295,28 +296,36 @@ func (repository *DataKinerjaPemdaRepositoryImpl) FindAll(ctx context.Context, t
 	}
 	defer rows.Close()
 
-	// Map untuk menyimpan data kinerja yang sudah diproses
+	// Map untuk menyimpan jenis data
+	jenisDataMap := make(map[int]*domain.DataKinerjaPemda)
 	dataKinerjaMap := make(map[int]*domain.DataKinerjaPemda)
-	var resultIds []int // Untuk menjaga urutan data kinerja
+	var jenisDataIds []int
 
 	for rows.Next() {
 		var (
-			dataKinerja domain.DataKinerjaPemda
-			targetId    sql.NullInt64
-			targetVal   sql.NullString
-			satuan      sql.NullString
-			targetTahun sql.NullString
+			jenisDataId          int
+			jenisDataNama        string
+			dataKinerjaId        sql.NullInt64
+			namaData             sql.NullString
+			rumusPerhitungan     sql.NullString
+			sumberData           sql.NullString
+			instansiProdusenData sql.NullString
+			keterangan           sql.NullString
+			targetId             sql.NullInt64
+			targetVal            sql.NullString
+			satuan               sql.NullString
+			targetTahun          sql.NullString
 		)
 
 		err := rows.Scan(
-			&dataKinerja.Id,
-			&dataKinerja.JenisDataId,
-			&dataKinerja.JenisData, // Field baru untuk menyimpan nama jenis data
-			&dataKinerja.NamaData,
-			&dataKinerja.RumusPerhitungan,
-			&dataKinerja.SumberData,
-			&dataKinerja.InstansiProdusenData,
-			&dataKinerja.Keterangan,
+			&jenisDataId,
+			&jenisDataNama,
+			&dataKinerjaId,
+			&namaData,
+			&rumusPerhitungan,
+			&sumberData,
+			&instansiProdusenData,
+			&keterangan,
 			&targetId,
 			&targetVal,
 			&satuan,
@@ -326,43 +335,77 @@ func (repository *DataKinerjaPemdaRepositoryImpl) FindAll(ctx context.Context, t
 			return nil, err
 		}
 
-		// Cek apakah data kinerja sudah ada di map
-		existingData, exists := dataKinerjaMap[dataKinerja.Id]
-		if !exists {
-			// Buat data kinerja baru
-			dataKinerja.Target = make([]domain.Target, 0)
-			dataKinerjaMap[dataKinerja.Id] = &dataKinerja
-			resultIds = append(resultIds, dataKinerja.Id)
-			existingData = &dataKinerja
+		// Pastikan jenis data ada di map (untuk jenis data tanpa data kinerja)
+		if _, exists := jenisDataMap[jenisDataId]; !exists {
+			jenisDataMap[jenisDataId] = &domain.DataKinerjaPemda{
+				JenisDataId: jenisDataId,
+				JenisData:   jenisDataNama,
+				Target:      make([]domain.Target, 0),
+			}
+			jenisDataIds = append(jenisDataIds, jenisDataId)
 		}
 
-		// Tambahkan target jika valid
-		if targetId.Valid && targetVal.Valid && satuan.Valid && targetTahun.Valid {
-			target := domain.Target{
-				Id:            int(targetId.Int64),
-				DataKinerjaId: dataKinerja.Id,
-				Target:        targetVal.String,
-				Satuan:        satuan.String,
-				Tahun:         targetTahun.String,
+		// Jika ada data kinerja
+		if dataKinerjaId.Valid {
+			dataKinerjaIdInt := int(dataKinerjaId.Int64)
+
+			// Cek apakah data kinerja sudah ada di map
+			existingData, exists := dataKinerjaMap[dataKinerjaIdInt]
+			if !exists {
+				// Buat data kinerja baru
+				dataKinerja := &domain.DataKinerjaPemda{
+					Id:                   dataKinerjaIdInt,
+					JenisDataId:          jenisDataId,
+					JenisData:            jenisDataNama,
+					NamaData:             namaData.String,
+					RumusPerhitungan:     rumusPerhitungan.String,
+					SumberData:           sumberData.String,
+					InstansiProdusenData: instansiProdusenData.String,
+					Keterangan:           keterangan.String,
+					Target:               make([]domain.Target, 0),
+				}
+				dataKinerjaMap[dataKinerjaIdInt] = dataKinerja
+				existingData = dataKinerja
 			}
-			existingData.Target = append(existingData.Target, target)
+
+			// Tambahkan target jika valid
+			if targetId.Valid && targetVal.Valid && satuan.Valid && targetTahun.Valid {
+				target := domain.Target{
+					Id:            int(targetId.Int64),
+					DataKinerjaId: dataKinerjaIdInt,
+					Target:        targetVal.String,
+					Satuan:        satuan.String,
+					Tahun:         targetTahun.String,
+				}
+				existingData.Target = append(existingData.Target, target)
+			}
 		}
 	}
 
 	// Konversi map ke slice dengan urutan yang benar
 	var result []domain.DataKinerjaPemda
-	for _, id := range resultIds {
-		if data, ok := dataKinerjaMap[id]; ok {
-			// Sort target berdasarkan tahun
-			sort.Slice(data.Target, func(i, j int) bool {
-				return data.Target[i].Tahun > data.Target[j].Tahun
-			})
-			result = append(result, *data)
-		}
-	}
 
-	if len(result) == 0 {
-		return []domain.DataKinerjaPemda{}, nil
+	// Tambahkan semua jenis data (termasuk yang tidak punya data kinerja)
+	for _, jenisDataId := range jenisDataIds {
+		jenisDataInfo := jenisDataMap[jenisDataId]
+
+		// Cari semua data kinerja untuk jenis data ini
+		hasDataKinerja := false
+		for _, dataKinerja := range dataKinerjaMap {
+			if dataKinerja.JenisDataId == jenisDataId {
+				hasDataKinerja = true
+				// Sort target berdasarkan tahun DESC
+				sort.Slice(dataKinerja.Target, func(i, j int) bool {
+					return dataKinerja.Target[i].Tahun > dataKinerja.Target[j].Tahun
+				})
+				result = append(result, *dataKinerja)
+			}
+		}
+
+		// Jika tidak ada data kinerja, tambahkan jenis data dengan data kinerja kosong
+		if !hasDataKinerja {
+			result = append(result, *jenisDataInfo)
+		}
 	}
 
 	return result, nil

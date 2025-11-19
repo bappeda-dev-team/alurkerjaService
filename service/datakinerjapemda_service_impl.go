@@ -151,7 +151,7 @@ func (service *DataKinerjaPemdaServiceImpl) FindById(ctx context.Context, id int
 	return helper.ToDataKinerjaPemdaResponse(result)
 }
 
-func (service *DataKinerjaPemdaServiceImpl) FindAll(ctx context.Context, jenisDataId int) []web.DataKinerjaPemdaResponse {
+func (service *DataKinerjaPemdaServiceImpl) FindAll(ctx context.Context, jenisDataId int) []web.JenisDataPemdaResponse {
 	tx, err := service.DB.Begin()
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
@@ -159,19 +159,49 @@ func (service *DataKinerjaPemdaServiceImpl) FindAll(ctx context.Context, jenisDa
 	results, err := service.Repository.FindAll(ctx, tx, jenisDataId)
 	helper.PanicIfError(err)
 
-	// Jika tidak ada data, kembalikan array kosong
+	// Jika tidak ada data sama sekali, kembalikan array kosong
 	if len(results) == 0 {
-		return []web.DataKinerjaPemdaResponse{}
+		return []web.JenisDataPemdaResponse{}
 	}
 
-	responses := helper.ToDataKinerjaPemdaResponses(results)
+	// Grouping berdasarkan jenis_data_id
+	jenisDataMap := make(map[int]*web.JenisDataPemdaResponse)
+
+	for _, result := range results {
+		// Jika jenis data belum ada di map, buat yang baru
+		if _, exists := jenisDataMap[result.JenisDataId]; !exists {
+			jenisDataMap[result.JenisDataId] = &web.JenisDataPemdaResponse{
+				Id:               result.JenisDataId,
+				JenisData:        result.JenisData,
+				DataKinerjaPemda: []web.DataKinerjaPemdaResponse{},
+			}
+		}
+
+		// Tambahkan data kinerja HANYA jika Id > 0 (ada data kinerja)
+		if result.Id > 0 {
+			jenisDataMap[result.JenisDataId].DataKinerjaPemda = append(
+				jenisDataMap[result.JenisDataId].DataKinerjaPemda,
+				helper.ToDataKinerjaPemdaResponse(result),
+			)
+		}
+	}
+
+	// Convert map ke slice
+	var responses []web.JenisDataPemdaResponse
+	for _, jenisDataResp := range jenisDataMap {
+		responses = append(responses, *jenisDataResp)
+	}
 
 	// Log untuk debugging
 	for _, resp := range responses {
-		log.Printf("Data Kinerja ID: %d, Nama: %s", resp.Id, resp.NamaData)
-		log.Printf("Jumlah Target: %d", len(resp.Target))
-		for _, t := range resp.Target {
-			log.Printf("- Target tahun %s: %s %s", t.Tahun, t.Target, t.Satuan)
+		log.Printf("Jenis Data ID: %d, Nama: %s", resp.Id, resp.JenisData)
+		log.Printf("Jumlah Data Kinerja: %d", len(resp.DataKinerjaPemda))
+		if len(resp.DataKinerjaPemda) == 0 {
+			log.Printf("  (Tidak ada data kinerja untuk jenis data ini)")
+		}
+		for _, dk := range resp.DataKinerjaPemda {
+			log.Printf("  - Data Kinerja ID: %d, Nama: %s", dk.Id, dk.NamaData)
+			log.Printf("    Jumlah Target: %d", len(dk.Target))
 		}
 	}
 

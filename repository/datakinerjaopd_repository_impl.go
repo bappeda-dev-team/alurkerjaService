@@ -247,11 +247,11 @@ func (repository *DataKinerjaOpdRepositoryImpl) FindAll(ctx context.Context, tx 
 	var (
 		query = `
 			SELECT
-				dk.id,
-				dk.jenis_data_id,
+				jd.id AS jenis_data_id,
 				jd.jenis_data AS nama_jenis_data,
-				dk.kode_opd,
-				dk.nama_opd,
+				jd.kode_opd,
+				jd.nama_opd,
+				dk.id,
 				dk.nama_data,
 				dk.rumus_perhitungan,
 				dk.sumber_data,
@@ -261,22 +261,22 @@ func (repository *DataKinerjaOpdRepositoryImpl) FindAll(ctx context.Context, tx 
 				t.target,
 				t.satuan,
 				t.tahun AS target_tahun
-			FROM tb_data_kinerja_opd dk
+			FROM tb_jenis_data_opd jd
+			LEFT JOIN tb_data_kinerja_opd dk ON jd.id = dk.jenis_data_id AND jd.kode_opd = dk.kode_opd
 			LEFT JOIN tb_target_opd t ON dk.id = t.data_kinerja_opd_id
-			JOIN tb_jenis_data_opd jd ON dk.jenis_data_id = jd.id AND dk.kode_opd = jd.kode_opd
 			WHERE 1=1`
 		args []interface{}
 	)
 
 	if kodeOpd != "" {
-		query += " AND dk.kode_opd = ?"
+		query += " AND jd.kode_opd = ?"
 		args = append(args, kodeOpd)
 	}
 	if jenisDataId > 0 {
-		query += " AND dk.jenis_data_id = ?"
+		query += " AND jd.id = ?"
 		args = append(args, jenisDataId)
 	}
-	query += " ORDER BY dk.id ASC, t.tahun DESC"
+	query += " ORDER BY jd.id ASC, dk.id ASC, t.tahun DESC"
 
 	rows, err := tx.QueryContext(ctx, query, args...)
 	if err != nil {
@@ -284,28 +284,39 @@ func (repository *DataKinerjaOpdRepositoryImpl) FindAll(ctx context.Context, tx 
 	}
 	defer rows.Close()
 
-	dataMap := make(map[int]*domain.DataKinerjaOpd)
-	var orderIds []int
+	jenisDataOpdMap := make(map[int]*domain.DataKinerjaOpd)
+	dataKinerjaMap := make(map[int]*domain.DataKinerjaOpd)
+	var jenisDataIds []int
 
 	for rows.Next() {
 		var (
-			item        domain.DataKinerjaOpd
-			targetId    sql.NullInt64
-			targetVal   sql.NullString
-			satuan      sql.NullString
-			targetTahun sql.NullString
+			jenisDataId          int
+			jenisDataNama        string
+			kodeOpd              string
+			namaOpd              string
+			dataKinerjaId        sql.NullInt64
+			namaData             sql.NullString
+			rumusPerhitungan     sql.NullString
+			sumberData           sql.NullString
+			instansiProdusenData sql.NullString
+			keterangan           sql.NullString
+			targetId             sql.NullInt64
+			targetVal            sql.NullString
+			satuan               sql.NullString
+			targetTahun          sql.NullString
 		)
+
 		if err := rows.Scan(
-			&item.Id,
-			&item.JenisDataId,
-			&item.JenisData,
-			&item.KodeOpd,
-			&item.NamaOpd,
-			&item.NamaData,
-			&item.RumusPerhitungan,
-			&item.SumberData,
-			&item.InstansiProdusenData,
-			&item.Keterangan,
+			&jenisDataId,
+			&jenisDataNama,
+			&kodeOpd,
+			&namaOpd,
+			&dataKinerjaId,
+			&namaData,
+			&rumusPerhitungan,
+			&sumberData,
+			&instansiProdusenData,
+			&keterangan,
 			&targetId,
 			&targetVal,
 			&satuan,
@@ -314,36 +325,76 @@ func (repository *DataKinerjaOpdRepositoryImpl) FindAll(ctx context.Context, tx 
 			return nil, err
 		}
 
-		existing, ok := dataMap[item.Id]
-		if !ok {
-			item.Target = make([]domain.TargetOpd, 0)
-			dataMap[item.Id] = &item
-			orderIds = append(orderIds, item.Id)
-			existing = &item
+		// Pastikan jenis data OPD ada di map
+		if _, exists := jenisDataOpdMap[jenisDataId]; !exists {
+			jenisDataOpdMap[jenisDataId] = &domain.DataKinerjaOpd{
+				JenisDataId: jenisDataId,
+				JenisData:   jenisDataNama,
+				KodeOpd:     kodeOpd,
+				NamaOpd:     namaOpd,
+				Target:      make([]domain.TargetOpd, 0),
+			}
+			jenisDataIds = append(jenisDataIds, jenisDataId)
 		}
 
-		if targetId.Valid && targetVal.Valid && satuan.Valid && targetTahun.Valid {
-			existing.Target = append(existing.Target, domain.TargetOpd{
-				Id:            int(targetId.Int64),
-				DataKinerjaId: item.Id,
-				Target:        targetVal.String,
-				Satuan:        satuan.String,
-				Tahun:         targetTahun.String,
-			})
+		// Jika ada data kinerja
+		if dataKinerjaId.Valid {
+			dataKinerjaIdInt := int(dataKinerjaId.Int64)
+
+			existingData, exists := dataKinerjaMap[dataKinerjaIdInt]
+			if !exists {
+				dataKinerja := &domain.DataKinerjaOpd{
+					Id:                   dataKinerjaIdInt,
+					JenisDataId:          jenisDataId,
+					JenisData:            jenisDataNama,
+					KodeOpd:              kodeOpd,
+					NamaOpd:              namaOpd,
+					NamaData:             namaData.String,
+					RumusPerhitungan:     rumusPerhitungan.String,
+					SumberData:           sumberData.String,
+					InstansiProdusenData: instansiProdusenData.String,
+					Keterangan:           keterangan.String,
+					Target:               make([]domain.TargetOpd, 0),
+				}
+				dataKinerjaMap[dataKinerjaIdInt] = dataKinerja
+				existingData = dataKinerja
+			}
+
+			// Tambahkan target jika valid
+			if targetId.Valid && targetVal.Valid && satuan.Valid && targetTahun.Valid {
+				existingData.Target = append(existingData.Target, domain.TargetOpd{
+					Id:            int(targetId.Int64),
+					DataKinerjaId: dataKinerjaIdInt,
+					Target:        targetVal.String,
+					Satuan:        satuan.String,
+					Tahun:         targetTahun.String,
+				})
+			}
 		}
 	}
 
+	// Konversi map ke slice
 	var result []domain.DataKinerjaOpd
-	for _, id := range orderIds {
-		if data, ok := dataMap[id]; ok {
-			sort.Slice(data.Target, func(i, j int) bool { return data.Target[i].Tahun > data.Target[j].Tahun })
-			result = append(result, *data)
+	for _, jenisDataId := range jenisDataIds {
+		jenisDataInfo := jenisDataOpdMap[jenisDataId]
+
+		hasDataKinerja := false
+		for _, dataKinerja := range dataKinerjaMap {
+			if dataKinerja.JenisDataId == jenisDataId {
+				hasDataKinerja = true
+				sort.Slice(dataKinerja.Target, func(i, j int) bool {
+					return dataKinerja.Target[i].Tahun > dataKinerja.Target[j].Tahun
+				})
+				result = append(result, *dataKinerja)
+			}
+		}
+
+		// Jika tidak ada data kinerja, tambahkan jenis data OPD kosong
+		if !hasDataKinerja {
+			result = append(result, *jenisDataInfo)
 		}
 	}
 
-	if len(result) == 0 {
-		return []domain.DataKinerjaOpd{}, nil
-	}
 	return result, nil
 }
 

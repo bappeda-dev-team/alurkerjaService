@@ -132,7 +132,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/datakinerjaopd/list/{kode_opd}/{jenis_data_id}": {
+        "/datakinerjaopd/list/{kode_opd}": {
             "get": {
                 "description": "Get list of Data Kinerja OPD filtered by jenis data",
                 "consumes": [
@@ -150,13 +150,6 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Kode OPD",
                         "name": "kode_opd",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Jenis Data ID",
-                        "name": "jenis_data_id",
                         "in": "path",
                         "required": true
                     }
@@ -401,7 +394,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/datakinerjapemda/list/{jenis_data_id}": {
+        "/datakinerjapemda/list/": {
             "get": {
                 "description": "Get list of Data Kinerja Pemda filtered by jenis data",
                 "consumes": [
@@ -414,15 +407,6 @@ const docTemplate = `{
                     "Data Kinerja Pemda"
                 ],
                 "summary": "List Data Kinerja Pemda",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Jenis Data ID",
-                        "name": "jenis_data_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -437,7 +421,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/web.DataKinerjaPemdaResponse"
+                                                "$ref": "#/definitions/web.JenisDataPemdaResponse"
                                             }
                                         }
                                     }
@@ -1326,6 +1310,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "nama_opd": {
+                    "type": "string"
+                }
+            }
+        },
+        "web.JenisDataPemdaResponse": {
+            "type": "object",
+            "properties": {
+                "data_kinerja": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web.DataKinerjaPemdaResponse"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "jenis_data": {
                     "type": "string"
                 }
             }

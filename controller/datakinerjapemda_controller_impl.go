@@ -150,19 +150,12 @@ func (controller *DataKinerjaPemdaControllerImpl) FindById(c echo.Context) error
 // @Tags Data Kinerja Pemda
 // @Accept json
 // @Produce json
-// @Param jenis_data_id path int true "Jenis Data ID"
-// @Success 200 {object} web.WebResponse{data=[]web.DataKinerjaPemdaResponse} "OK"
+// @Success 200 {object} web.WebResponse{data=[]web.JenisDataPemdaResponse} "OK"
 // @Failure 400 {object} web.WebResponse "Bad Request"
-// @Router /datakinerjapemda/list/{jenis_data_id} [get]
+// @Router /datakinerjapemda/list/ [get]
 func (controller *DataKinerjaPemdaControllerImpl) FindAll(c echo.Context) error {
-	jenisDataId, err := strconv.Atoi(c.Param("jenis_data_id"))
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, web.WebResponse{
-			Code:   http.StatusBadRequest,
-			Status: "BAD_REQUEST",
-			Data:   "Jenis data id tidak boleh kosong",
-		})
-	}
+	jenisDataId, _ := strconv.Atoi(c.QueryParam("jenis_data_id"))
+
 	dataKinerjaPemdaResponses := controller.DataKinerjaPemdaService.FindAll(c.Request().Context(), jenisDataId)
 
 	if len(dataKinerjaPemdaResponses) == 0 {

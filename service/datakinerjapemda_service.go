@@ -10,5 +10,5 @@ type DataKinerjaPemdaService interface {
 	Update(ctx context.Context, request web.DataKinerjaPemdaUpdateRequest) web.DataKinerjaPemdaResponse
 	Delete(ctx context.Context, id int)
 	FindById(ctx context.Context, id int) web.DataKinerjaPemdaResponse
-	FindAll(ctx context.Context, jenisDataId int) []web.DataKinerjaPemdaResponse
+	FindAll(ctx context.Context, jenisDataId int) []web.JenisDataPemdaResponse
 }

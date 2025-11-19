@@ -1,5 +1,11 @@
 package web
 
+type JenisDataPemdaResponse struct {
+	Id               int                        `json:"id"`
+	JenisData        string                     `json:"jenis_data"`
+	DataKinerjaPemda []DataKinerjaPemdaResponse `json:"data_kinerja"`
+}
+
 type DataKinerjaPemdaResponse struct {
 	Id                   int              `json:"id"`
 	JenisDataId          int              `json:"jenis_data_id"`

@@ -10,5 +10,5 @@ type DataKinerjaOpdService interface {
 	Update(ctx context.Context, request web.DataKinerjaOpdUpdateRequest) (web.DataKinerjaOpdResponse, error)
 	Delete(ctx context.Context, id int)
 	FindById(ctx context.Context, id int) (web.DataKinerjaOpdResponse, error)
-	FindAll(ctx context.Context, kodeOpd string, jenisDataId int) []web.DataKinerjaOpdResponse
+	FindAll(ctx context.Context, kodeOpd string, jenisDataId int) []web.JenisDataKinerjaOpdResponse
 }

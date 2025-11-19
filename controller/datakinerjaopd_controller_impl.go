@@ -171,10 +171,9 @@ func (controller *DataKinerjaOpdControllerImpl) FindById(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param kode_opd path string true "Kode OPD"
-// @Param jenis_data_id path int true "Jenis Data ID"
 // @Success 200 {object} web.WebResponse{data=[]web.DataKinerjaOpdResponse} "OK"
 // @Failure 400 {object} web.WebResponse "Bad Request"
-// @Router /datakinerjaopd/list/{kode_opd}/{jenis_data_id} [get]
+// @Router /datakinerjaopd/list/{kode_opd} [get]
 func (controller *DataKinerjaOpdControllerImpl) FindAll(c echo.Context) error {
 	kodeOpd := c.Param("kode_opd")
 	if kodeOpd == "" {
@@ -184,15 +183,7 @@ func (controller *DataKinerjaOpdControllerImpl) FindAll(c echo.Context) error {
 			Data:   "Kode OPD tidak boleh kosong",
 		})
 	}
-	jenisDataId, err := strconv.Atoi(c.Param("jenis_data_id"))
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, web.WebResponse{
-			Code:   http.StatusBadRequest,
-			Status: "BAD_REQUEST",
-			Data:   err.Error(),
-		})
-	}
-
+	jenisDataId, _ := strconv.Atoi(c.QueryParam("jenis_data_id"))
 	dataKinerjaOpdResponses := controller.DataKinerjaOpdService.FindAll(c.Request().Context(), kodeOpd, jenisDataId)
 
 	return c.JSON(http.StatusOK, web.WebResponse{

@@ -213,6 +213,17 @@ definitions:
     - kode_opd
     - nama_opd
     type: object
+  web.JenisDataPemdaResponse:
+    properties:
+      data_kinerja:
+        items:
+          $ref: '#/definitions/web.DataKinerjaPemdaResponse'
+        type: array
+      id:
+        type: integer
+      jenis_data:
+        type: string
+    type: object
   web.JenisDataResponse:
     properties:
       id:
@@ -421,7 +432,7 @@ paths:
       summary: Get Data Kinerja OPD by ID
       tags:
       - Data Kinerja OPD
-  /datakinerjaopd/list/{kode_opd}/{jenis_data_id}:
+  /datakinerjaopd/list/{kode_opd}:
     get:
       consumes:
       - application/json
@@ -432,11 +443,6 @@ paths:
         name: kode_opd
         required: true
         type: string
-      - description: Jenis Data ID
-        in: path
-        name: jenis_data_id
-        required: true
-        type: integer
       produces:
       - application/json
       responses:
@@ -591,17 +597,11 @@ paths:
       summary: Get Data Kinerja Pemda by ID
       tags:
       - Data Kinerja Pemda
-  /datakinerjapemda/list/{jenis_data_id}:
+  /datakinerjapemda/list/:
     get:
       consumes:
       - application/json
       description: Get list of Data Kinerja Pemda filtered by jenis data
-      parameters:
-      - description: Jenis Data ID
-        in: path
-        name: jenis_data_id
-        required: true
-        type: integer
       produces:
       - application/json
       responses:
@@ -613,7 +613,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/web.DataKinerjaPemdaResponse'
+                    $ref: '#/definitions/web.JenisDataPemdaResponse'
                   type: array
               type: object
         "400":

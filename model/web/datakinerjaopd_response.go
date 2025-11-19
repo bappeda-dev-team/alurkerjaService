@@ -1,5 +1,13 @@
 package web
 
+type JenisDataKinerjaOpdResponse struct {
+	Id             int                      `json:"id"`
+	JenisData      string                   `json:"jenis_data"`
+	KodeOpd        string                   `json:"kode_opd"`
+	NamaOpd        string                   `json:"nama_opd"`
+	DataKinerjaOpd []DataKinerjaOpdResponse `json:"data_kinerja"`
+}
+
 type DataKinerjaOpdResponse struct {
 	Id                   int              `json:"id"`
 	JenisDataId          int              `json:"jenis_data_id"`
