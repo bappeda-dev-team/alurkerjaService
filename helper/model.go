@@ -23,8 +23,6 @@ func ToJenisDataResponses(jenisDatas []domain.JenisData) []web.JenisDataResponse
 func ToDataKinerjaPemdaResponse(dataKinerjaPemda domain.DataKinerjaPemda) web.DataKinerjaPemdaResponse {
 	return web.DataKinerjaPemdaResponse{
 		Id:                   dataKinerjaPemda.Id,
-		JenisDataId:          dataKinerjaPemda.JenisDataId,
-		JenisData:            dataKinerjaPemda.JenisData,
 		NamaData:             dataKinerjaPemda.NamaData,
 		RumusPerhitungan:     dataKinerjaPemda.RumusPerhitungan,
 		SumberData:           dataKinerjaPemda.SumberData,
@@ -62,10 +60,6 @@ func ToTargetResponses(targets []domain.Target) []web.TargetResponse {
 func ToDataKinerjaOpdResponse(data domain.DataKinerjaOpd) web.DataKinerjaOpdResponse {
 	return web.DataKinerjaOpdResponse{
 		Id:                   data.Id,
-		JenisDataId:          data.JenisDataId,
-		JenisData:            data.JenisData,
-		KodeOpd:              data.KodeOpd,
-		NamaOpd:              data.NamaOpd,
 		NamaData:             data.NamaData,
 		RumusPerhitungan:     data.RumusPerhitungan,
 		SumberData:           data.SumberData,
