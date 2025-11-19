@@ -8,8 +8,6 @@ type JenisDataPemdaResponse struct {
 
 type DataKinerjaPemdaResponse struct {
 	Id                   int              `json:"id"`
-	JenisDataId          int              `json:"jenis_data_id"`
-	JenisData            string           `json:"jenis_data"`
 	NamaData             string           `json:"nama_data"`
 	RumusPerhitungan     string           `json:"rumus_perhitungan"`
 	SumberData           string           `json:"sumber_data"`
