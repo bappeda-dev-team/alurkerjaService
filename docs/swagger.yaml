@@ -35,17 +35,9 @@ definitions:
         type: integer
       instansi_produsen_data:
         type: string
-      jenis_data:
-        type: string
-      jenis_data_id:
-        type: integer
       keterangan:
         type: string
-      kode_opd:
-        type: string
       nama_data:
-        type: string
-      nama_opd:
         type: string
       rumus_perhitungan:
         type: string
@@ -120,10 +112,6 @@ definitions:
         type: integer
       instansi_produsen_data:
         type: string
-      jenis_data:
-        type: string
-      jenis_data_id:
-        type: integer
       keterangan:
         type: string
       nama_data:
@@ -172,6 +160,21 @@ definitions:
         type: string
     required:
     - jenis_data
+    type: object
+  web.JenisDataKinerjaOpdResponse:
+    properties:
+      data_kinerja:
+        items:
+          $ref: '#/definitions/web.DataKinerjaOpdResponse'
+        type: array
+      id:
+        type: integer
+      jenis_data:
+        type: string
+      kode_opd:
+        type: string
+      nama_opd:
+        type: string
     type: object
   web.JenisDataOpdCreateRequest:
     properties:
@@ -454,7 +457,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/web.DataKinerjaOpdResponse'
+                    $ref: '#/definitions/web.JenisDataKinerjaOpdResponse'
                   type: array
               type: object
         "400":

@@ -171,7 +171,7 @@ func (controller *DataKinerjaOpdControllerImpl) FindById(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param kode_opd path string true "Kode OPD"
-// @Success 200 {object} web.WebResponse{data=[]web.DataKinerjaOpdResponse} "OK"
+// @Success 200 {object} web.WebResponse{data=[]web.JenisDataKinerjaOpdResponse} "OK"
 // @Failure 400 {object} web.WebResponse "Bad Request"
 // @Router /datakinerjaopd/list/{kode_opd} [get]
 func (controller *DataKinerjaOpdControllerImpl) FindAll(c echo.Context) error {

@@ -168,7 +168,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/web.DataKinerjaOpdResponse"
+                                                "$ref": "#/definitions/web.JenisDataKinerjaOpdResponse"
                                             }
                                         }
                                     }
@@ -1054,22 +1054,10 @@ const docTemplate = `{
                 "instansi_produsen_data": {
                     "type": "string"
                 },
-                "jenis_data": {
-                    "type": "string"
-                },
-                "jenis_data_id": {
-                    "type": "integer"
-                },
                 "keterangan": {
                     "type": "string"
                 },
-                "kode_opd": {
-                    "type": "string"
-                },
                 "nama_data": {
-                    "type": "string"
-                },
-                "nama_opd": {
                     "type": "string"
                 },
                 "rumus_perhitungan": {
@@ -1177,12 +1165,6 @@ const docTemplate = `{
                 "instansi_produsen_data": {
                     "type": "string"
                 },
-                "jenis_data": {
-                    "type": "string"
-                },
-                "jenis_data_id": {
-                    "type": "integer"
-                },
                 "keterangan": {
                     "type": "string"
                 },
@@ -1251,6 +1233,29 @@ const docTemplate = `{
             ],
             "properties": {
                 "jenis_data": {
+                    "type": "string"
+                }
+            }
+        },
+        "web.JenisDataKinerjaOpdResponse": {
+            "type": "object",
+            "properties": {
+                "data_kinerja": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web.DataKinerjaOpdResponse"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "jenis_data": {
+                    "type": "string"
+                },
+                "kode_opd": {
+                    "type": "string"
+                },
+                "nama_opd": {
                     "type": "string"
                 }
             }
