@@ -13,7 +13,7 @@ func NewRouter(jenisDataController controller.JenisDataController, dataKinerjaPe
 
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	e.Use(middleware.CORS())
+	// e.Use(middleware.CORS())
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
