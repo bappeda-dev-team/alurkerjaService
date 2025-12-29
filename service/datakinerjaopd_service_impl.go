@@ -121,30 +121,10 @@ func (s *DataKinerjaOpdServiceImpl) Update(ctx context.Context, request web.Data
 
 	log.Printf("Updating Data Kinerja OPD - ID: %d", existing.Id)
 
-	// Cari jenis data OPD berdasarkan ID yang baru
-	jenisDataOpd, err := s.JenisDataRepository.FindByIdOpd(ctx, tx, request.JenisDataId)
-	if err != nil {
-		log.Printf("Error finding JenisDataOpd with ID %d: %v", request.JenisDataId, err)
-		return web.DataKinerjaOpdResponse{}, errors.New("jenis data OPD tidak ditemukan")
-	}
-
-	// Validasi: Kode OPD harus sama dengan yang ada di jenis data OPD
-	if jenisDataOpd.KodeOpd != request.KodeOpd {
-		log.Printf("Validasi Gagal - KodeOpd tidak sesuai!")
-		log.Printf("- KodeOpd di Request: %s", request.KodeOpd)
-		log.Printf("- KodeOpd di JenisDataOpd (ID:%d): %s", jenisDataOpd.Id, jenisDataOpd.KodeOpd)
-		return web.DataKinerjaOpdResponse{}, errors.New("kode OPD tidak sesuai dengan jenis data OPD yang dipilih")
-	}
-
-	log.Printf("Validasi Berhasil - KodeOpd sesuai: %s", request.KodeOpd)
 	log.Printf("Current Data: %+v", existing)
 
 	data := domain.DataKinerjaOpd{
 		Id:                   request.Id,
-		JenisDataId:          request.JenisDataId,
-		JenisData:            jenisDataOpd.JenisData,
-		KodeOpd:              request.KodeOpd,
-		NamaOpd:              jenisDataOpd.NamaOpd,
 		NamaData:             request.NamaData,
 		RumusPerhitungan:     helper.EmptyStringIfNull(request.RumusPerhitungan),
 		SumberData:           helper.EmptyStringIfNull(request.SumberData),

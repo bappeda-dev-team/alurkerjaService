@@ -70,9 +70,6 @@ func (repository *DataKinerjaOpdRepositoryImpl) Update(ctx context.Context, tx *
 	query := `
 		UPDATE tb_data_kinerja_opd
 		SET
-			jenis_data_id = ?,
-			kode_opd = ?,
-			nama_opd = ?,
 			nama_data = ?,
 			rumus_perhitungan = ?,
 			sumber_data = ?,
@@ -80,9 +77,6 @@ func (repository *DataKinerjaOpdRepositoryImpl) Update(ctx context.Context, tx *
 			keterangan = ?
 		WHERE id = ?`
 	_, err = tx.ExecContext(ctx, query,
-		dataKinerjaOpd.JenisDataId,
-		dataKinerjaOpd.KodeOpd,
-		dataKinerjaOpd.NamaOpd,
 		dataKinerjaOpd.NamaData,
 		dataKinerjaOpd.RumusPerhitungan,
 		dataKinerjaOpd.SumberData,
